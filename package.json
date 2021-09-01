@@ -1,0 +1,26 @@
+{
+  "name": "ms-alerts",
+  "version": "1.0.0",
+  "description": "Alerts service for the Modern Slavery NRM application",
+  "main": "index.js",
+  "engines": {
+    "node": "^14.15.0"
+  },
+  "scripts": {
+    "alerts": "node ./alerts",
+    "lint": "eslint ."
+  },
+  "author": "Sulthan Ahmed & Alex Swann",
+  "license": "MIT",
+  "dependencies": {
+    "knex": "^0.21.2",
+    "moment": "^2.27.0",
+    "node-json-logger": "0.0.11",
+    "notifications-node-client": "^4.8.0",
+    "pg": "^8.3.0"
+  },
+  "devDependencies": {
+    "eslint": "^6.7.1",
+    "eslint-config-homeoffice": "^2.2.0"
+  }
+}

@@ -1,0 +1,48 @@
+---
+kind: pipeline
+name: default
+type: kubernetes
+
+steps:
+#- name: npm-audit
+#  pull: if-not-exists
+#  image: node:12
+#  commands:
+#    - npm audit --production --audit-level=moderate
+#  when:
+#    branch: [ master, feature/* ]
+#    event: push
+
+- name: image_to_quay
+  pull: if-not-exists
+  image: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/acp/dind
+  environment:
+    DOCKER_PASSWORD:
+      from_secret: DOCKER_PASSWORD
+  commands:
+    - docker build -t server-$${DRONE_COMMIT_SHA} .
+    - docker build -f Dockerfile-alerts -t alerts-$${DRONE_COMMIT_SHA} .
+    - docker build -f Dockerfile-lookup -t lookup-$${DRONE_COMMIT_SHA} .
+    - docker login -u="ukhomeofficedigital+modern_slavery_bot" -p=$${DOCKER_PASSWORD} quay.io
+    - docker tag server-$${DRONE_COMMIT_SHA} quay.io/ukhomeofficedigital/modern-slavery-data-service:server-$${DRONE_COMMIT_SHA}
+    - docker tag alerts-$${DRONE_COMMIT_SHA} quay.io/ukhomeofficedigital/modern-slavery-data-service:alerts-$${DRONE_COMMIT_SHA}
+    - docker tag lookup-$${DRONE_COMMIT_SHA} quay.io/ukhomeofficedigital/modern-slavery-data-service:lookup-$${DRONE_COMMIT_SHA}
+    - docker tag server-$${DRONE_COMMIT_SHA} quay.io/ukhomeofficedigital/modern-slavery-data-service:server-latest
+    - docker tag alerts-$${DRONE_COMMIT_SHA} quay.io/ukhomeofficedigital/modern-slavery-data-service:alerts-latest
+    - docker tag lookup-$${DRONE_COMMIT_SHA} quay.io/ukhomeofficedigital/modern-slavery-data-service:lookup-latest
+    - docker push quay.io/ukhomeofficedigital/modern-slavery-data-service:server-$${DRONE_COMMIT_SHA}
+    - docker push quay.io/ukhomeofficedigital/modern-slavery-data-service:alerts-$${DRONE_COMMIT_SHA}
+    - docker push quay.io/ukhomeofficedigital/modern-slavery-data-service:lookup-$${DRONE_COMMIT_SHA}
+    - docker push quay.io/ukhomeofficedigital/modern-slavery-data-service:server-latest
+    - docker push quay.io/ukhomeofficedigital/modern-slavery-data-service:alerts-latest
+    - docker push quay.io/ukhomeofficedigital/modern-slavery-data-service:lookup-latest
+
+  when:
+    branch: master
+    event: push
+
+services:
+  - name: docker
+    image: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/acp/dind
+
+...
