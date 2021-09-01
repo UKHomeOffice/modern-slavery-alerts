@@ -73,10 +73,10 @@ steps:
     image: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/acp/anchore-submission:latest
     pull: always
     environment:
-      IMAGE_NAME: firearms:${DRONE_COMMIT_SHA}
+      IMAGE_NAME: modern-slavery-alerts:${DRONE_COMMIT_SHA}
       LOCAL_IMAGE: true
       TOLERATE: medium
-      WHITELIST_FILE: hof-services-config/Firearms_Licensing/anchore-cve-exceptions.txt
+      WHITELIST_FILE: hof-services-config/Modern_Slavery_Nrm/anchore-cve-exceptions.txt
     when:
       branch: master
       event: pull_request
@@ -123,7 +123,7 @@ steps:
     image: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/acp/anchore-submission:latest
     pull: always
     environment:
-      IMAGE_NAME: firearms:${DRONE_COMMIT_SHA}
+      IMAGE_NAME: modern-slavery-alerts:${DRONE_COMMIT_SHA}
       LOCAL_IMAGE: true
       TOLERATE: medium
       WHITELIST_FILE: hof-services-config/Modern_Slavery_Nrm/anchore-cve-exceptions.txt
