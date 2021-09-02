@@ -1,5 +1,5 @@
 {
-  "name": "ms-alerts",
+  "name": "save-return-email-alerts",
   "version": "1.0.0",
   "description": "Alerts service for the Modern Slavery NRM application",
   "main": "index.js",
