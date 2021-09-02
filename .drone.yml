@@ -87,7 +87,7 @@ steps:
     image: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/acp/anchore-submission:latest
     pull: always
     environment:
-      IMAGE_NAME: modern-slavery-alerts:${DRONE_COMMIT_SHA}
+      IMAGE_NAME: save-return-email-alerts:${DRONE_COMMIT_SHA}
       LOCAL_IMAGE: true
       TOLERATE: medium
       WHITELIST_FILE: hof-services-config/Modern_Slavery_Nrm/anchore-cve-exceptions.txt
@@ -137,7 +137,7 @@ steps:
     image: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/acp/anchore-submission:latest
     pull: always
     environment:
-      IMAGE_NAME: modern-slavery-alerts:${DRONE_COMMIT_SHA}
+      IMAGE_NAME: save-return-email-alerts:${DRONE_COMMIT_SHA}
       LOCAL_IMAGE: true
       TOLERATE: medium
       WHITELIST_FILE: hof-services-config/Modern_Slavery_Nrm/anchore-cve-exceptions.txt
