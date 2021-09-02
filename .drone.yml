@@ -23,9 +23,25 @@ steps:
     commands:
       - git clone https://$${DRONE_GIT_USERNAME}:$${DRONE_GIT_TOKEN}@github.com/UKHomeOfficeForms/hof-services-config.git
     when:
-      branch:
-        include:
-        - master
+      branch: master
+      event: [push, pull_request]
+
+  - name: setup
+    pull: if-not-exists
+    image: node:14
+    commands:
+      - yarn install --frozen-lockfile
+    when:
+      branch: master
+      event: [push, pull_request]
+
+  - name: linting
+    pull: if-not-exists
+    image: node:14
+    commands:
+      - yarn run test:lint
+    when:
+      branch: master
       event: [push, pull_request]
 
   - name: build_image
@@ -64,9 +80,7 @@ steps:
     commands:
       - yarn run test:snyk
     when:
-      branch:
-        include:
-          - master
+      branch: master
       event: pull_request
 
   - name: anchore_scan
