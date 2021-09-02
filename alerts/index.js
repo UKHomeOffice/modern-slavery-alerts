@@ -2,10 +2,13 @@
 
 const Logger = require('node-json-logger');
 const logger = new Logger();
-const config = require('../knexfile')[process.env.NODE_ENV || 'development'];
-const knex = require('knex')(config);
+const config = require('../config');
+const knexfile = require('../knexfile');
+const knexfileConfig = knexfile[process.env.NODE_ENV ? 'production' : 'development'];
+const tableName = config.tableName;
+const knex = require('knex')(knexfileConfig);
 const moment = require('moment');
-const tableName = 'reports';
+
 const selectableProps = [
   'id',
   'session',
@@ -14,8 +17,8 @@ const selectableProps = [
 ];
 
 const notifyKey = process.env.NOTIFY_KEY;
-var NotifyClient = require('notifications-node-client').NotifyClient;
-var notifyClient = new NotifyClient(notifyKey);
+const NotifyClient = require('notifications-node-client').NotifyClient;
+const notifyClient = new NotifyClient(notifyKey);
 
 const TIMEOUT_TEMPLATE = process.env.TIMEOUT_TEMPLATE;
 const SAVE_REPORT_TEMPLATE = process.env.SAVE_REPORT_TEMPLATE;
@@ -30,73 +33,73 @@ const DELETION_TIMEOUT = process.env.DELETION_TIMEOUT || 28;
 
 setInterval(() => {
   knex.select(selectableProps)
-  .from(tableName)
-  .then((reports) => {
-    let promises = [];
+    .from(tableName)
+    .then(reports => {
+      const promises = [];
 
-    reports.forEach(report => {
+      reports.forEach(report => {
       // alert about newly saved case
-      if (report.session.alertUser === true) {
-        logger.info('New save and return', {id: report.id});
+        if (report.session.alertUser === true) {
+          logger.info('New save and return', {id: report.id});
 
-        promises.push(notifyClient.sendEmail(SAVE_REPORT_TEMPLATE, report.session['user-email'], {
-          personalisation: {
-            reference: report.session.reference,
-            deadline: moment(report.created_at).add(DELETION_TIMEOUT, 'days').format('DD MMMM YYYY'),
-            url: URL
-          }
-        }));
-      } else if (!report.session.hasOwnProperty('alertUser') &&
+          promises.push(notifyClient.sendEmail(SAVE_REPORT_TEMPLATE, report.session['user-email'], {
+            personalisation: {
+              reference: report.session.reference,
+              deadline: moment(report.created_at).add(DELETION_TIMEOUT, 'days').format('DD MMMM YYYY'),
+              url: URL
+            }
+          }));
+        } else if (!report.session.hasOwnProperty('alertUser') &&
         moment().diff(report.updated_at, 'seconds') > NRM_FORM_SESSION_TIMEOUT) {
         // check for expired sessions (they wont have an alertUser key but will be over an hour old)
-        logger.info('Session expired for user', {id: report.id});
+          logger.info('Session expired for user', {id: report.id});
 
-        promises.push(notifyClient.sendEmail(TIMEOUT_TEMPLATE, report.session['user-email'], {
-          personalisation: {
-            reference: report.session.reference,
-            deadline: moment(report.created_at).add(DELETION_TIMEOUT, 'days').format('DD MMMM YYYY'),
-            url: URL
-          }
-        }));
-      } else if (moment().diff(report.updated_at, 'days') > DELETION_TIMEOUT) {
+          promises.push(notifyClient.sendEmail(TIMEOUT_TEMPLATE, report.session['user-email'], {
+            personalisation: {
+              reference: report.session.reference,
+              deadline: moment(report.created_at).add(DELETION_TIMEOUT, 'days').format('DD MMMM YYYY'),
+              url: URL
+            }
+          }));
+        } else if (moment().diff(report.updated_at, 'days') > DELETION_TIMEOUT) {
         // report is deleted
-        logger.info('Deleted old report', {id: report.id});
+          logger.info('Deleted old report', {id: report.id});
 
-        promises.push(notifyClient.sendEmail(DELETE_TEMPLATE, report.session['user-email'], {
-          personalisation: {
-            reference: report.session.reference,
-            deadline: moment(report.created_at).add(DELETION_TIMEOUT, 'days').format('DD MMMM YYYY'),
-            url: URL
-          }
-        }));
-        promises.push(knex(tableName).where({id: report.id}).del());
-        return;
-      } else if (!report.session.hasOwnProperty('firstAlert') &&
+          promises.push(notifyClient.sendEmail(DELETE_TEMPLATE, report.session['user-email'], {
+            personalisation: {
+              reference: report.session.reference,
+              deadline: moment(report.created_at).add(DELETION_TIMEOUT, 'days').format('DD MMMM YYYY'),
+              url: URL
+            }
+          }));
+          promises.push(knex(tableName).where({id: report.id}).del());
+          return;
+        } else if (!report.session.hasOwnProperty('firstAlert') &&
         moment().diff(report.updated_at, 'days') > FIRST_ALERT_TIMEOUT) {
         // report is coming up for deletion
-        logger.info(`${FIRST_ALERT_TIMEOUT} day warning for report`, {id: report.id});
+          logger.info(`${FIRST_ALERT_TIMEOUT} day warning for report`, {id: report.id});
 
-        promises.push(notifyClient.sendEmail(SOON_TO_BE_DELETED_TEMPLATE, report.session['user-email'], {
-          personalisation: {
-            reference: report.session.reference,
-            deadline: moment(report.created_at).add(DELETION_TIMEOUT, 'days').format('DD MMMM YYYY'),
-            url: URL
-          }
-        }));
+          promises.push(notifyClient.sendEmail(SOON_TO_BE_DELETED_TEMPLATE, report.session['user-email'], {
+            personalisation: {
+              reference: report.session.reference,
+              deadline: moment(report.created_at).add(DELETION_TIMEOUT, 'days').format('DD MMMM YYYY'),
+              url: URL
+            }
+          }));
 
-        report.session.firstAlert = true;
-      } else {
-        return;
-      }
+          report.session.firstAlert = true;
+        } else {
+          return;
+        }
 
-      report.session.alertUser = false;
+        report.session.alertUser = false;
 
-      promises.push(knex(tableName).where({
-        id: report.id
-      })
-      .update({session: report.session}));
+        promises.push(knex(tableName).where({
+          id: report.id
+        })
+          .update({session: report.session}));
+      });
+
+      return Promise.all(promises);
     });
-
-    return Promise.all(promises);
-  });
 }, 12000);

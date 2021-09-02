@@ -1,10 +1,9 @@
 'use strict';
 
 // Update with your config settings.
-
 module.exports = {
   development: {
-    client: 'postgresql',
+    client: process.env.CLIENT || 'postgresql',
     connection: {
       database: 'knex_session',
       user: 'knex',
@@ -19,7 +18,7 @@ module.exports = {
     }
   },
   production: {
-    client: 'postgresql',
+    client: process.env.CLIENT || 'postgresql',
     connection: {
       host: process.env.DB_HOST,
       user: process.env.DB_USER,
@@ -34,5 +33,4 @@ module.exports = {
       tableName: 'knex_migrations_data_service'
     }
   }
-
 };

@@ -8,7 +8,12 @@
   },
   "scripts": {
     "alerts": "node ./alerts",
-    "lint": "eslint .",
+    "test:lint": "eslint . --config ./node_modules/eslint-config-hof/default.js",
+    "db:setup": "yarn run db:migrate && yarn run db:seed",
+    "db:test": "yarn run db:setup && yarn run db:rollback",
+    "db:migrate": "knex migrate:latest",
+    "db:rollback": "knex migrate:rollback",
+    "db:seed": "knex seed:run",
     "test:snyk": "snyk config set api=SNYK_TOKEN && snyk test"
   },
   "author": "Sulthan Ahmed & Alex Swann",
@@ -21,8 +26,8 @@
     "pg": "^8.3.0"
   },
   "devDependencies": {
-    "eslint": "^6.7.1",
-    "eslint-config-homeoffice": "^2.2.0",
+    "eslint": "^7.32.0",
+    "eslint-config-hof": "^1.2.1",
     "snyk": "^1.696.0"
   }
 }

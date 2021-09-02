@@ -1,12 +1,39 @@
-# Modern Slavery Data Service
-Provides a service layer to talk to a database to store and manage data for the
-[modern slavery](https://github.com/UKHomeOffice/modern-slavery) application
+# Save & Return Email Alerts Service
+Provides an alert email service that uses Gov Notify to send periodic alerts depending on database updates.
 
-The main modern slavery service has the ability to save an application or read a saved application. In order to do this, it needs to use this modern-slavery-data-service.
+## Env Vars
+You can set the following to specific how you want your results to look:
+- `SERVICE_TYPE` - This specifies what service you are using the lookup UI for. The default is for the modern slavery service. But additional templates could be created which this drives.
+- `TABLE_NAME` - This specifies the SQL table name you want to query. This defaults to 'reports'.
+- `CLIENT` - This is the database client type. This defaults to postgresql.
+- `DB_HOST`,`DB_USER`,`DB_PASS`,`DB_NAME` - These are production credentials for accessing the relevant database. These default to 'knex' for the user and password, and 'knex_session' for the database name. These are only for local development.
+- `NOTIFY_KEY` - Gov Notify API key for sending emails.
+- `TIMEOUT_TEMPLATE` - Gov Notify template ID for timeout notifications.
+- `SAVE_REPORT_TEMPLATE` - Gov Notify template ID for saved report notifications.
+- `SOON_TO_BE_DELETED_TEMPLATE` - Gov Notify template ID for imminent record deletion notifications.
+- `DELETE_TEMPLATE` - Gov Notify template ID for deleted record notifications.
+- `APP_URL` - Application URL to be included in Gov Notify notifications.
 
-**Saving:** The main application will send the data to this service as an end point.  This service will connect to a database and store that data and respond back to the main application if successful
+(Optional)
+- `SESSION_TTL` - Timeout for application form added to Gov Notify Notifications. Defaults to 3600 seconds (1 hour).
+- `FIRST_ALERT_TIMEOUT` - Time since first alert before Notify message sends a 2nd alert informing user of time frame left to access report. Defaults to 21 days.
+- `DELETION_TIMEOUT` - Time applicant has left to access report since 2nd alert. Defaults to 28 days.
 
-**Reading:** The main application will make a request to this modern-slavery-data-service.  This service will then connect to the database, get the data back and send it to the main application if it is successful
+## Local Setup
+The migrations and seeds folders are used by knex to setup a local DB with dummy information for testing the service. These are not used in production where it is assumed a separate DB is setup for knex to connect to that is already setup.
+
+Run the following commands to setup a test DB:
+```
+brew install postgres
+brew services start postgresql
+psql postgres
+CREATE ROLE knex WITH LOGIN PASSWORD 'knex';
+ALTER ROLE knex WITH SUPERUSER;
+CREATE DATABASE knex_session;
+\q
+yarn run db:setup
+```
+If you download Postico for Mac (https://eggerapps.at/postico/), you can then inspect your postgres DB for example and look at the test entries inserted into the test table 'Reports'.
 
 ## Install & Run <a name="install-and-run"></a>
 The application can be run on your local machine
@@ -14,25 +41,11 @@ The application can be run on your local machine
 ### Dependencies <a name="dependencies"></a>
 You will need to have the following installed:
 
-[Node JS](https://nodejs.org/en/download/releases/) ( LTS Erbium v12.x )
+[Node JS](https://nodejs.org/en/download/releases/) ( LTS Erbium v14.x )
 
 [npm](https://www.npmjs.com/get-npm) ( v6.x )
 
 [PostgreSQL](https://www.postgresql.org/download/) ( v12.x )
-
-### PostgreSQL setup <a name="postgresql-setup"></a>
-To run this app locally you will need to set up a new role and database.
-
-To create the user - access your postgresql terminal and enter:
-```
-CREATE ROLE knex with LOGIN;
-```
-For the database:
-```
-CREATE DATABASE knex_session;
-```
-
-You can then run ```npm run migrate``` to finish the configuration.
 
 ## Running the application
 
@@ -40,12 +53,7 @@ Ensure your database service is available and running.
 
 Then to run the service use:
 
- ```npm start``` to run the server.
+ ```yarn run alerts``` to run the server.
 
-```npm run alerts``` to run the alerts app.
-
-```npm run lookup``` to run the lookup app.
-
-With the server running you can run the main app with save and return functionality. 
+With the server running you can run the main app with save and return lookup UI functionality.
 See details of how to do this in [modern slavery](https://github.com/UKHomeOffice/modern-slavery) application
-
