@@ -38,12 +38,14 @@ If you download Postico for Mac (https://eggerapps.at/postico/), you can then in
 ## Install & Run <a name="install-and-run"></a>
 The application can be run on your local machine
 
-### Dependencies <a name="dependencies"></a>
+### Prerequisite <a name="prerequisites"></a>
 You will need to have the following installed:
 
 [Node JS](https://nodejs.org/en/download/releases/) ( LTS Erbium v14.x )
 
 [npm](https://www.npmjs.com/get-npm) ( v6.x )
+
+[yarn](https://classic.yarnpkg.com/en/docs/install/#mac-stable) ( v1.22.5.x )
 
 [PostgreSQL](https://www.postgresql.org/download/) ( v12.x )
 
