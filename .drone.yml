@@ -5,7 +5,7 @@ type: kubernetes
 
 environment:
   IMAGE_URL: quay.io/ukhomeofficedigital
-  IMAGE_REPO: modern-slavery-alerts
+  IMAGE_REPO: save-return-email-alerts
   HOF_CONFIG: hof-services-config/Modern_Slavery_Nrm
 
 trigger:
