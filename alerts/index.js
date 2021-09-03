@@ -3,7 +3,7 @@
 const Logger = require('node-json-logger');
 const logger = new Logger();
 const config = require('../config');
-const knexfile = require('../knexfile');
+const knexfile = require(`${config.migrationsRepo}`);
 const knexfileConfig = knexfile[process.env.NODE_ENV ? 'production' : 'development'];
 const tableName = config.tableName;
 const knex = require('knex')(knexfileConfig);

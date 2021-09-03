@@ -9,11 +9,6 @@
   "scripts": {
     "alerts": "node ./alerts",
     "test:lint": "eslint . --config ./node_modules/eslint-config-hof/default.js",
-    "db:setup": "yarn run db:migrate && yarn run db:seed",
-    "db:test": "yarn run db:setup && yarn run db:rollback",
-    "db:migrate": "knex migrate:latest",
-    "db:rollback": "knex migrate:rollback",
-    "db:seed": "knex seed:run",
     "test:snyk": "snyk config set api=SNYK_TOKEN && snyk test"
   },
   "author": "Sulthan Ahmed & Alex Swann",
@@ -21,6 +16,7 @@
   "dependencies": {
     "knex": "^0.21.2",
     "moment": "^2.27.0",
+    "ms-migrations": "^1.0.2",
     "node-json-logger": "0.0.11",
     "notifications-node-client": "^4.8.0",
     "pg": "^8.3.0"
