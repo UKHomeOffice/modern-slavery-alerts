@@ -2,7 +2,7 @@
 Provides an alert email service that uses Gov Notify to send periodic alerts depending on database updates.
 
 ## Database connection
-This repo uses ms-migrations as default to connect to postgres. You could supply a different dependency to connect to a DB if you wanted to using the `MIGRATIONS_REPO` environmental variable. Ms-migrations uses knex which, if NODE_ENV is not set, will try to connect to a localhost instance of postgres. If it is set, it will try to use the below environmental variables `DB_HOST` etc... to connect to a formal DB using the proper credentials.
+This repo uses ms-schema as default to connect to postgres. You could supply a different dependency to connect to a DB if you wanted to using the `MIGRATIONS_REPO` environmental variable. ms-schema uses knex which, if NODE_ENV is not set, will try to connect to a localhost instance of postgres. If it is set, it will try to use the below environmental variables `DB_HOST` etc... to connect to a formal DB using the proper credentials.
 
 ## Env Vars
 You can set the following to specific how you want your results to look:
@@ -16,7 +16,7 @@ You can set the following to specific how you want your results to look:
 - `SOON_TO_BE_DELETED_TEMPLATE` - Gov Notify template ID for imminent record deletion notifications.
 - `DELETE_TEMPLATE` - Gov Notify template ID for deleted record notifications.
 - `APP_URL` - Application URL to be included in Gov Notify notifications.
-- `MIGRATIONS_REPO` - A migrations repository containing a knexfile for connecting to a DB. Default to ms-migrations which may contain what you need. Test data contained that repo if you n
+- `MIGRATIONS_REPO` - A migrations repository containing a knexfile for connecting to a DB. Default to ms-schema which may contain what you need. Test data contained that repo if you n
 
 (Optional)
 - `SESSION_TTL` - Timeout for application form added to Gov Notify Notifications. Defaults to 3600 seconds (1 hour).
@@ -39,7 +39,7 @@ CREATE DATABASE knex_session;
 If you download Postico for Mac (https://eggerapps.at/postico/), you can then inspect your postgres DB for example and look at the test entries inserted into the test table 'Reports'.
 
 You then need to use a knexfile with migrations and seeds folders to populate your database.
-The ms-migrations repo which is used for migrations in the Modern Slavery service (https://github.com/UKHomeOffice/ms-migrations) can be used as a test example and is included in this project. You can run
+The ms-schema repo which is used for migrations in the Modern Slavery service (https://github.com/UKHomeOffice/ms-schema) can be used as a test example and is included in this project. You can run
 ```
 yarn run db:setup
 ```

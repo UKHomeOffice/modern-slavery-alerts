@@ -16,7 +16,7 @@
   "dependencies": {
     "knex": "^0.95.11",
     "moment": "^2.27.0",
-    "ms-migrations": "^2.0.0",
+    "ms-schema": "^1.2.0",
     "node-json-logger": "0.0.11",
     "notifications-node-client": "^4.8.0"
   },
