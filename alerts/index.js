@@ -33,9 +33,9 @@ const DELETION_TIMEOUT = process.env.DELETION_TIMEOUT || 28;
 
 const sendNotifyEmail = (template, email, content) => {
   return notifyClient.sendEmail(template, email, {
-    personalisation: content 
-  })
-}
+    personalisation: content
+  });
+};
 
 setInterval(() => {
   knex.select(selectableProps)
@@ -50,24 +50,24 @@ setInterval(() => {
           reference: report.session.reference,
           deadline: moment(report.updated_at).add(DELETION_TIMEOUT, 'days').format('DD MMMM YYYY'),
           url: URL
-        }
+        };
 
-      // alert about newly saved case
+        // alert about newly saved case
         if (report.session.alertUser === true) {
           logger.info('New save and return', {id: report.id});
 
-          promises.push(sendNotifyEmail(SAVE_REPORT_TEMPLATE, email, personalisation))
+          promises.push(sendNotifyEmail(SAVE_REPORT_TEMPLATE, email, personalisation));
         } else if (!report.session.hasOwnProperty('alertUser') &&
         moment().diff(report.updated_at, 'seconds') > NRM_FORM_SESSION_TIMEOUT) {
         // check for expired sessions (they wont have an alertUser key but will be over an hour old)
           logger.info('Session expired for user', {id: report.id});
 
-          promises.push(sendNotifyEmail(TIMEOUT_TEMPLATE, email, personalisation))
+          promises.push(sendNotifyEmail(TIMEOUT_TEMPLATE, email, personalisation));
         } else if (moment().diff(updated, 'days') > DELETION_TIMEOUT) {
         // report is deleted
           logger.info('Deleted old report', {id: report.id});
 
-          promises.push(sendNotifyEmail(DELETE_TEMPLATE, email, personalisation))
+          promises.push(sendNotifyEmail(DELETE_TEMPLATE, email, personalisation));
           promises.push(knex(tableName).where({id: report.id}).del());
           return;
         } else if (!report.session.hasOwnProperty('firstAlert') &&
@@ -75,7 +75,7 @@ setInterval(() => {
         // report is coming up for deletion
           logger.info(`${FIRST_ALERT_TIMEOUT} day warning for report`, {id: report.id});
 
-          promises.push(sendNotifyEmail(SOON_TO_BE_DELETED_TEMPLATE, email, personalisation))
+          promises.push(sendNotifyEmail(SOON_TO_BE_DELETED_TEMPLATE, email, personalisation));
           report.session.firstAlert = true;
         } else {
           return;
