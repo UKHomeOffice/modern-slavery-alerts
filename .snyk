@@ -2,12 +2,12 @@
 version: v1.22.1
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
-  SNYK-JS-JSONSCHEMA-1920922:
-    - notifications-node-client@4.9.0 > request@2.88.0 > http-signature@1.2.0 > jsprim@1.4.1 > json-schema@0.2.3:
-        reason: Need to update notifications-node-client
-        expires: '2022-04-21T17:02:21.865Z'
   SNYK-JS-MINIMIST-2429795:
     - '* > minimist@1.2.5':
         reason: No direct upgrade
-        expires: '2022-04-21T17:02:21.865Z'
+        expires: '2022-05-21T17:02:21.865Z'
+  SNYK-JS-MOMENT-2440688: 
+    - node-json-logger@0.0.11 > moment-timezone@0.5.33 > moment@2.29.1:
+        reason: No direct upgrade
+        expires: '2022-05-21T17:02:21.865Z'
 patch: {}
